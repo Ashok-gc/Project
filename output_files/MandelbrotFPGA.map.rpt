@@ -1,0 +1,761 @@
+Analysis & Synthesis report for MandelbrotFPGA
+Fri Apr 24 19:38:36 2026
+Quartus Prime Version 22.1std.2 Build 922 07/20/2023 SC Lite Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Analysis & Synthesis Summary
+  3. Analysis & Synthesis Settings
+  4. Parallel Compilation
+  5. Analysis & Synthesis Source Files Read
+  6. Analysis & Synthesis Resource Usage Summary
+  7. Analysis & Synthesis Resource Utilization by Entity
+  8. Analysis & Synthesis DSP Block Usage Summary
+  9. State Machine - |MandelbrotTop|LT24Display:lt24|stateMachine
+ 10. State Machine - |MandelbrotTop|MandelbrotCore:mandelbrot_core|state
+ 11. Registers Removed During Synthesis
+ 12. General Register Statistics
+ 13. Inverted Register Statistics
+ 14. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 15. Source assignments for LT24Display:lt24
+ 16. Parameter Settings for User Entity Instance: ZoomController:zoom_ctrl
+ 17. Parameter Settings for User Entity Instance: MandelbrotCore:mandelbrot_core
+ 18. Parameter Settings for User Entity Instance: MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator
+ 19. Parameter Settings for User Entity Instance: MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator|FixedPointMult:mult_zr_sq
+ 20. Parameter Settings for User Entity Instance: MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator|FixedPointMult:mult_zi_sq
+ 21. Parameter Settings for User Entity Instance: MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator|FixedPointMult:mult_zr_zi
+ 22. Parameter Settings for User Entity Instance: MandelbrotCore:mandelbrot_core|ColourMapper:colour_map
+ 23. Parameter Settings for User Entity Instance: LT24Display:lt24
+ 24. Parameter Settings for User Entity Instance: LT24Display:lt24|LT24InitialData:initDataRom
+ 25. Parameter Settings for User Entity Instance: LT24Display:lt24|LT24DisplayInterface:LT24Interface
+ 26. Parameter Settings for User Entity Instance: SevenSegDecoder:zoom_seg
+ 27. Parameter Settings for User Entity Instance: SevenSegDecoder:frame_seg
+ 28. Port Connectivity Checks: "SevenSegDecoder:frame_seg"
+ 29. Port Connectivity Checks: "SevenSegDecoder:zoom_seg"
+ 30. Port Connectivity Checks: "LT24Display:lt24"
+ 31. Port Connectivity Checks: "MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator|FixedPointMult:mult_zr_zi"
+ 32. Post-Synthesis Netlist Statistics for Top Partition
+ 33. Elapsed Time Per Partition
+ 34. Analysis & Synthesis Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2023  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details, at
+https://fpgasoftware.intel.com/eula.
+
+
+
++----------------------------------------------------------------------------------+
+; Analysis & Synthesis Summary                                                     ;
++---------------------------------+------------------------------------------------+
+; Analysis & Synthesis Status     ; Successful - Fri Apr 24 19:38:36 2026          ;
+; Quartus Prime Version           ; 22.1std.2 Build 922 07/20/2023 SC Lite Edition ;
+; Revision Name                   ; MandelbrotFPGA                                 ;
+; Top-level Entity Name           ; MandelbrotTop                                  ;
+; Family                          ; Cyclone V                                      ;
+; Logic utilization (in ALMs)     ; N/A                                            ;
+; Total registers                 ; 478                                            ;
+; Total pins                      ; 89                                             ;
+; Total virtual pins              ; 0                                              ;
+; Total block memory bits         ; 0                                              ;
+; Total DSP Blocks                ; 3                                              ;
+; Total HSSI RX PCSs              ; 0                                              ;
+; Total HSSI PMA RX Deserializers ; 0                                              ;
+; Total HSSI TX PCSs              ; 0                                              ;
+; Total HSSI PMA TX Serializers   ; 0                                              ;
+; Total PLLs                      ; 0                                              ;
+; Total DLLs                      ; 0                                              ;
++---------------------------------+------------------------------------------------+
+
+
++---------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Settings                                                                                             ;
++---------------------------------------------------------------------------------+--------------------+--------------------+
+; Option                                                                          ; Setting            ; Default Value      ;
++---------------------------------------------------------------------------------+--------------------+--------------------+
+; Device                                                                          ; 5CSEMA5F31C6       ;                    ;
+; Top-level entity name                                                           ; MandelbrotTop      ; MandelbrotFPGA     ;
+; Family name                                                                     ; Cyclone V          ; Cyclone V          ;
+; Maximum processors allowed for parallel compilation                             ; 4                  ;                    ;
+; Use smart compilation                                                           ; Off                ; Off                ;
+; Enable parallel Assembler and Timing Analyzer during compilation                ; On                 ; On                 ;
+; Enable compact report table                                                     ; Off                ; Off                ;
+; Restructure Multiplexers                                                        ; Auto               ; Auto               ;
+; MLAB Add Timing Constraints For Mixed-Port Feed-Through Mode Setting Don't Care ; Off                ; Off                ;
+; Create Debugging Nodes for IP Cores                                             ; Off                ; Off                ;
+; Preserve fewer node names                                                       ; On                 ; On                 ;
+; Intel FPGA IP Evaluation Mode                                                   ; Enable             ; Enable             ;
+; Verilog Version                                                                 ; Verilog_2001       ; Verilog_2001       ;
+; VHDL Version                                                                    ; VHDL_1993          ; VHDL_1993          ;
+; State Machine Processing                                                        ; Auto               ; Auto               ;
+; Safe State Machine                                                              ; Off                ; Off                ;
+; Extract Verilog State Machines                                                  ; On                 ; On                 ;
+; Extract VHDL State Machines                                                     ; On                 ; On                 ;
+; Ignore Verilog initial constructs                                               ; Off                ; Off                ;
+; Iteration limit for constant Verilog loops                                      ; 5000               ; 5000               ;
+; Iteration limit for non-constant Verilog loops                                  ; 250                ; 250                ;
+; Add Pass-Through Logic to Inferred RAMs                                         ; On                 ; On                 ;
+; Infer RAMs from Raw Logic                                                       ; On                 ; On                 ;
+; Parallel Synthesis                                                              ; On                 ; On                 ;
+; DSP Block Balancing                                                             ; Auto               ; Auto               ;
+; NOT Gate Push-Back                                                              ; On                 ; On                 ;
+; Power-Up Don't Care                                                             ; On                 ; On                 ;
+; Remove Redundant Logic Cells                                                    ; Off                ; Off                ;
+; Remove Duplicate Registers                                                      ; On                 ; On                 ;
+; Ignore CARRY Buffers                                                            ; Off                ; Off                ;
+; Ignore CASCADE Buffers                                                          ; Off                ; Off                ;
+; Ignore GLOBAL Buffers                                                           ; Off                ; Off                ;
+; Ignore ROW GLOBAL Buffers                                                       ; Off                ; Off                ;
+; Ignore LCELL Buffers                                                            ; Off                ; Off                ;
+; Ignore SOFT Buffers                                                             ; On                 ; On                 ;
+; Limit AHDL Integers to 32 Bits                                                  ; Off                ; Off                ;
+; Optimization Technique                                                          ; Balanced           ; Balanced           ;
+; Carry Chain Length                                                              ; 70                 ; 70                 ;
+; Auto Carry Chains                                                               ; On                 ; On                 ;
+; Auto Open-Drain Pins                                                            ; On                 ; On                 ;
+; Perform WYSIWYG Primitive Resynthesis                                           ; Off                ; Off                ;
+; Auto ROM Replacement                                                            ; On                 ; On                 ;
+; Auto RAM Replacement                                                            ; On                 ; On                 ;
+; Auto DSP Block Replacement                                                      ; On                 ; On                 ;
+; Auto Shift Register Replacement                                                 ; Auto               ; Auto               ;
+; Allow Shift Register Merging across Hierarchies                                 ; Auto               ; Auto               ;
+; Auto Clock Enable Replacement                                                   ; On                 ; On                 ;
+; Strict RAM Replacement                                                          ; Off                ; Off                ;
+; Allow Synchronous Control Signals                                               ; On                 ; On                 ;
+; Force Use of Synchronous Clear Signals                                          ; Off                ; Off                ;
+; Auto Resource Sharing                                                           ; Off                ; Off                ;
+; Allow Any RAM Size For Recognition                                              ; Off                ; Off                ;
+; Allow Any ROM Size For Recognition                                              ; Off                ; Off                ;
+; Allow Any Shift Register Size For Recognition                                   ; Off                ; Off                ;
+; Use LogicLock Constraints during Resource Balancing                             ; On                 ; On                 ;
+; Ignore translate_off and synthesis_off directives                               ; Off                ; Off                ;
+; Timing-Driven Synthesis                                                         ; On                 ; On                 ;
+; Report Parameter Settings                                                       ; On                 ; On                 ;
+; Report Source Assignments                                                       ; On                 ; On                 ;
+; Report Connectivity Checks                                                      ; On                 ; On                 ;
+; Ignore Maximum Fan-Out Assignments                                              ; Off                ; Off                ;
+; Synchronization Register Chain Length                                           ; 3                  ; 3                  ;
+; Power Optimization During Synthesis                                             ; Normal compilation ; Normal compilation ;
+; HDL message level                                                               ; Level2             ; Level2             ;
+; Suppress Register Optimization Related Messages                                 ; Off                ; Off                ;
+; Number of Removed Registers Reported in Synthesis Report                        ; 5000               ; 5000               ;
+; Number of Swept Nodes Reported in Synthesis Report                              ; 5000               ; 5000               ;
+; Number of Inverted Registers Reported in Synthesis Report                       ; 100                ; 100                ;
+; Clock MUX Protection                                                            ; On                 ; On                 ;
+; Auto Gated Clock Conversion                                                     ; Off                ; Off                ;
+; Block Design Naming                                                             ; Auto               ; Auto               ;
+; SDC constraint protection                                                       ; Off                ; Off                ;
+; Synthesis Effort                                                                ; Auto               ; Auto               ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal                    ; On                 ; On                 ;
+; Pre-Mapping Resynthesis Optimization                                            ; Off                ; Off                ;
+; Analysis & Synthesis Message Level                                              ; Medium             ; Medium             ;
+; Disable Register Merging Across Hierarchies                                     ; Auto               ; Auto               ;
+; Resource Aware Inference For Block RAM                                          ; On                 ; On                 ;
+; Automatic Parallel Synthesis                                                    ; On                 ; On                 ;
+; Partial Reconfiguration Bitstream ID                                            ; Off                ; Off                ;
++---------------------------------------------------------------------------------+--------------------+--------------------+
+
+
++------------------------------------------+
+; Parallel Compilation                     ;
++----------------------------+-------------+
+; Processors                 ; Number      ;
++----------------------------+-------------+
+; Number detected on machine ; 12          ;
+; Maximum allowed            ; 4           ;
+;                            ;             ;
+; Average used               ; 1.00        ;
+; Maximum used               ; 4           ;
+;                            ;             ;
+; Usage by Processor         ; % Time Used ;
+;     Processor 1            ; 100.0%      ;
+;     Processor 2            ;   0.0%      ;
+;     Processor 3            ;   0.0%      ;
+;     Processor 4            ;   0.0%      ;
++----------------------------+-------------+
+
+
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                                                                                                                                             ;
++-----------------------------------------------------------------------------------------+-----------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path                                                        ; Used in Netlist ; File Type              ; File Name with Absolute Path                                                                                                        ; Library ;
++-----------------------------------------------------------------------------------------+-----------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------+---------+
+; rtl/MandelbrotTop.v                                                                     ; yes             ; User Verilog HDL File  ; C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v                                                   ;         ;
+; rtl/MandelbrotCore.v                                                                    ; yes             ; User Verilog HDL File  ; C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotCore.v                                                  ;         ;
+; rtl/MandelbrotIterator.v                                                                ; yes             ; User Verilog HDL File  ; C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotIterator.v                                              ;         ;
+; rtl/FixedPointMult.v                                                                    ; yes             ; User Verilog HDL File  ; C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/FixedPointMult.v                                                  ;         ;
+; rtl/ColourMapper.v                                                                      ; yes             ; User Verilog HDL File  ; C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v                                                    ;         ;
+; rtl/ZoomController.v                                                                    ; yes             ; User Verilog HDL File  ; C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ZoomController.v                                                  ;         ;
+; rtl/SevenSegDecoder.v                                                                   ; yes             ; User Verilog HDL File  ; C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/SevenSegDecoder.v                                                 ;         ;
+; ../ELEC5566M-Resources/sampleCode/UnitA-1/HPSWrapper/synthesis/submodules/LT24Display.v ; yes             ; User Verilog HDL File  ; C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/ELEC5566M-Resources/sampleCode/UnitA-1/HPSWrapper/synthesis/submodules/LT24Display.v ;         ;
++-----------------------------------------------------------------------------------------+-----------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------+---------+
+
+
++--------------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary                  ;
++---------------------------------------------+----------------+
+; Resource                                    ; Usage          ;
++---------------------------------------------+----------------+
+; Estimate of Logic utilization (ALMs needed) ; 581            ;
+;                                             ;                ;
+; Combinational ALUT usage for logic          ; 961            ;
+;     -- 7 input functions                    ; 2              ;
+;     -- 6 input functions                    ; 175            ;
+;     -- 5 input functions                    ; 79             ;
+;     -- 4 input functions                    ; 68             ;
+;     -- <=3 input functions                  ; 637            ;
+;                                             ;                ;
+; Dedicated logic registers                   ; 478            ;
+;                                             ;                ;
+; I/O pins                                    ; 89             ;
+;                                             ;                ;
+; Total DSP Blocks                            ; 3              ;
+;                                             ;                ;
+; Maximum fan-out node                        ; CLOCK_50~input ;
+; Maximum fan-out                             ; 478            ;
+; Total fan-out                               ; 5597           ;
+; Average fan-out                             ; 3.45           ;
++---------------------------------------------+----------------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                                                             ;
++--------------------------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+-----------------------------------------------------------------------------------------------------+----------------------+--------------+
+; Compilation Hierarchy Node                 ; Combinational ALUTs ; Dedicated Logic Registers ; Block Memory Bits ; DSP Blocks ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                 ; Entity Name          ; Library Name ;
++--------------------------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+-----------------------------------------------------------------------------------------------------+----------------------+--------------+
+; |MandelbrotTop                             ; 961 (85)            ; 478 (63)                  ; 0                 ; 3          ; 89   ; 0            ; |MandelbrotTop                                                                                      ; MandelbrotTop        ; work         ;
+;    |LT24Display:lt24|                      ; 119 (61)            ; 107 (70)                  ; 0                 ; 0          ; 0    ; 0            ; |MandelbrotTop|LT24Display:lt24                                                                     ; LT24Display          ; work         ;
+;       |LT24DisplayInterface:LT24Interface| ; 31 (31)             ; 24 (24)                   ; 0                 ; 0          ; 0    ; 0            ; |MandelbrotTop|LT24Display:lt24|LT24DisplayInterface:LT24Interface                                  ; LT24DisplayInterface ; work         ;
+;       |LT24InitialData:initDataRom|        ; 27 (27)             ; 9 (9)                     ; 0                 ; 0          ; 0    ; 0            ; |MandelbrotTop|LT24Display:lt24|LT24InitialData:initDataRom                                         ; LT24InitialData      ; work         ;
+;       |ResetSynchroniser:resetGen|         ; 0 (0)               ; 4 (4)                     ; 0                 ; 0          ; 0    ; 0            ; |MandelbrotTop|LT24Display:lt24|ResetSynchroniser:resetGen                                          ; ResetSynchroniser    ; work         ;
+;    |MandelbrotCore:mandelbrot_core|        ; 432 (180)           ; 207 (207)                 ; 0                 ; 3          ; 0    ; 0            ; |MandelbrotTop|MandelbrotCore:mandelbrot_core                                                       ; MandelbrotCore       ; work         ;
+;       |ColourMapper:colour_map|            ; 118 (118)           ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |MandelbrotTop|MandelbrotCore:mandelbrot_core|ColourMapper:colour_map                               ; ColourMapper         ; work         ;
+;       |MandelbrotIterator:iterator|        ; 134 (134)           ; 0 (0)                     ; 0                 ; 3          ; 0    ; 0            ; |MandelbrotTop|MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator                           ; MandelbrotIterator   ; work         ;
+;          |FixedPointMult:mult_zi_sq|       ; 0 (0)               ; 0 (0)                     ; 0                 ; 1          ; 0    ; 0            ; |MandelbrotTop|MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator|FixedPointMult:mult_zi_sq ; FixedPointMult       ; work         ;
+;          |FixedPointMult:mult_zr_sq|       ; 0 (0)               ; 0 (0)                     ; 0                 ; 1          ; 0    ; 0            ; |MandelbrotTop|MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator|FixedPointMult:mult_zr_sq ; FixedPointMult       ; work         ;
+;          |FixedPointMult:mult_zr_zi|       ; 0 (0)               ; 0 (0)                     ; 0                 ; 1          ; 0    ; 0            ; |MandelbrotTop|MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator|FixedPointMult:mult_zr_zi ; FixedPointMult       ; work         ;
+;    |SevenSegDecoder:zoom_seg|              ; 7 (7)               ; 0 (0)                     ; 0                 ; 0          ; 0    ; 0            ; |MandelbrotTop|SevenSegDecoder:zoom_seg                                                             ; SevenSegDecoder      ; work         ;
+;    |ZoomController:zoom_ctrl|              ; 318 (318)           ; 101 (101)                 ; 0                 ; 0          ; 0    ; 0            ; |MandelbrotTop|ZoomController:zoom_ctrl                                                             ; ZoomController       ; work         ;
++--------------------------------------------+---------------------+---------------------------+-------------------+------------+------+--------------+-----------------------------------------------------------------------------------------------------+----------------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
++----------------------------------------------+
+; Analysis & Synthesis DSP Block Usage Summary ;
++-------------------------------+--------------+
+; Statistic                     ; Number Used  ;
++-------------------------------+--------------+
+; Independent 27x27             ; 3            ;
+; Total number of DSP blocks    ; 3            ;
+;                               ;              ;
+; Fixed Point Signed Multiplier ; 3            ;
++-------------------------------+--------------+
+
+
+Encoding Type:  One-Hot
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |MandelbrotTop|LT24Display:lt24|stateMachine                                                                                                                                                                                                                                                                      ;
++---------------------------+-------------------------+--------------------------+---------------------------+---------------------------+--------------------------+---------------------------+---------------------------+--------------------------+------------------------+-------------------------+-------------------------+
+; Name                      ; stateMachine.IDLE_STATE ; stateMachine.CASET_STATE ; stateMachine.XHADDR_STATE ; stateMachine.XLADDR_STATE ; stateMachine.PASET_STATE ; stateMachine.YHADDR_STATE ; stateMachine.YLADDR_STATE ; stateMachine.WRITE_STATE ; stateMachine.CMD_STATE ; stateMachine.LOAD_STATE ; stateMachine.INIT_STATE ;
++---------------------------+-------------------------+--------------------------+---------------------------+---------------------------+--------------------------+---------------------------+---------------------------+--------------------------+------------------------+-------------------------+-------------------------+
+; stateMachine.INIT_STATE   ; 0                       ; 0                        ; 0                         ; 0                         ; 0                        ; 0                         ; 0                         ; 0                        ; 0                      ; 0                       ; 0                       ;
+; stateMachine.LOAD_STATE   ; 0                       ; 0                        ; 0                         ; 0                         ; 0                        ; 0                         ; 0                         ; 0                        ; 0                      ; 1                       ; 1                       ;
+; stateMachine.CMD_STATE    ; 0                       ; 0                        ; 0                         ; 0                         ; 0                        ; 0                         ; 0                         ; 0                        ; 1                      ; 0                       ; 1                       ;
+; stateMachine.WRITE_STATE  ; 0                       ; 0                        ; 0                         ; 0                         ; 0                        ; 0                         ; 0                         ; 1                        ; 0                      ; 0                       ; 1                       ;
+; stateMachine.YLADDR_STATE ; 0                       ; 0                        ; 0                         ; 0                         ; 0                        ; 0                         ; 1                         ; 0                        ; 0                      ; 0                       ; 1                       ;
+; stateMachine.YHADDR_STATE ; 0                       ; 0                        ; 0                         ; 0                         ; 0                        ; 1                         ; 0                         ; 0                        ; 0                      ; 0                       ; 1                       ;
+; stateMachine.PASET_STATE  ; 0                       ; 0                        ; 0                         ; 0                         ; 1                        ; 0                         ; 0                         ; 0                        ; 0                      ; 0                       ; 1                       ;
+; stateMachine.XLADDR_STATE ; 0                       ; 0                        ; 0                         ; 1                         ; 0                        ; 0                         ; 0                         ; 0                        ; 0                      ; 0                       ; 1                       ;
+; stateMachine.XHADDR_STATE ; 0                       ; 0                        ; 1                         ; 0                         ; 0                        ; 0                         ; 0                         ; 0                        ; 0                      ; 0                       ; 1                       ;
+; stateMachine.CASET_STATE  ; 0                       ; 1                        ; 0                         ; 0                         ; 0                        ; 0                         ; 0                         ; 0                        ; 0                      ; 0                       ; 1                       ;
+; stateMachine.IDLE_STATE   ; 1                       ; 0                        ; 0                         ; 0                         ; 0                        ; 0                         ; 0                         ; 0                        ; 0                      ; 0                       ; 1                       ;
++---------------------------+-------------------------+--------------------------+---------------------------+---------------------------+--------------------------+---------------------------+---------------------------+--------------------------+------------------------+-------------------------+-------------------------+
+
+
+Encoding Type:  One-Hot
++---------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |MandelbrotTop|MandelbrotCore:mandelbrot_core|state                                                                                           ;
++-------------------+----------------+------------------+-------------------+---------------+------------------+----------------+------------------+------------+
+; Name              ; state.NEXT_ROW ; state.NEXT_PIXEL ; state.WRITE_PIXEL ; state.COMPUTE ; state.INIT_PIXEL ; state.INIT_ROW ; state.INIT_FRAME ; state.IDLE ;
++-------------------+----------------+------------------+-------------------+---------------+------------------+----------------+------------------+------------+
+; state.IDLE        ; 0              ; 0                ; 0                 ; 0             ; 0                ; 0              ; 0                ; 0          ;
+; state.INIT_FRAME  ; 0              ; 0                ; 0                 ; 0             ; 0                ; 0              ; 1                ; 1          ;
+; state.INIT_ROW    ; 0              ; 0                ; 0                 ; 0             ; 0                ; 1              ; 0                ; 1          ;
+; state.INIT_PIXEL  ; 0              ; 0                ; 0                 ; 0             ; 1                ; 0              ; 0                ; 1          ;
+; state.COMPUTE     ; 0              ; 0                ; 0                 ; 1             ; 0                ; 0              ; 0                ; 1          ;
+; state.WRITE_PIXEL ; 0              ; 0                ; 1                 ; 0             ; 0                ; 0              ; 0                ; 1          ;
+; state.NEXT_PIXEL  ; 0              ; 1                ; 0                 ; 0             ; 0                ; 0              ; 0                ; 1          ;
+; state.NEXT_ROW    ; 1              ; 0                ; 0                 ; 0             ; 0                ; 0              ; 0                ; 1          ;
++-------------------+----------------+------------------+-------------------+---------------+------------------+----------------+------------------+------------+
+
+
++---------------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                                    ;
++----------------------------------------------+----------------------------------------+
+; Register name                                ; Reason for Removal                     ;
++----------------------------------------------+----------------------------------------+
+; LT24Display:lt24|xAddrTemp[8..15]            ; Stuck at GND due to stuck port data_in ;
+; LT24Display:lt24|yAddrTemp[9..15]            ; Stuck at GND due to stuck port data_in ;
+; julia_timer[0]                               ; Merged with cycle_timer[0]             ;
+; ZoomController:zoom_ctrl|julia_ci[0]         ; Stuck at GND due to stuck port data_in ;
+; ZoomController:zoom_ctrl|y_offset[1..3]      ; Stuck at GND due to stuck port data_in ;
+; ZoomController:zoom_ctrl|julia_cr[0]         ; Stuck at GND due to stuck port data_in ;
+; ZoomController:zoom_ctrl|x_offset[1]         ; Stuck at GND due to stuck port data_in ;
+; MandelbrotCore:mandelbrot_core|iter_final[0] ; Lost fanout                            ;
+; LT24Display:lt24|stateMachine~15             ; Lost fanout                            ;
+; LT24Display:lt24|stateMachine~16             ; Lost fanout                            ;
+; LT24Display:lt24|stateMachine~17             ; Lost fanout                            ;
+; LT24Display:lt24|stateMachine~18             ; Lost fanout                            ;
+; MandelbrotCore:mandelbrot_core|state~10      ; Lost fanout                            ;
+; MandelbrotCore:mandelbrot_core|state~11      ; Lost fanout                            ;
+; MandelbrotCore:mandelbrot_core|state~12      ; Lost fanout                            ;
+; LT24Display:lt24|stateMachine.CMD_STATE      ; Stuck at GND due to stuck port data_in ;
+; Total Number of Removed Registers = 31       ;                                        ;
++----------------------------------------------+----------------------------------------+
+
+
++------------------------------------------------------+
+; General Register Statistics                          ;
++----------------------------------------------+-------+
+; Statistic                                    ; Value ;
++----------------------------------------------+-------+
+; Total registers                              ; 478   ;
+; Number of registers using Synchronous Clear  ; 161   ;
+; Number of registers using Synchronous Load   ; 167   ;
+; Number of registers using Asynchronous Clear ; 64    ;
+; Number of registers using Asynchronous Load  ; 0     ;
+; Number of registers using Clock Enable       ; 368   ;
+; Number of registers using Preset             ; 0     ;
++----------------------------------------------+-------+
+
+
++--------------------------------------------------------------------+
+; Inverted Register Statistics                                       ;
++----------------------------------------------------------+---------+
+; Inverted Register                                        ; Fan out ;
++----------------------------------------------------------+---------+
+; LT24Display:lt24|displayRegSelect                        ; 2       ;
+; LT24Display:lt24|ResetSynchroniser:resetGen|resetSync[3] ; 64      ;
+; LT24Display:lt24|ResetSynchroniser:resetGen|resetSync[2] ; 1       ;
+; LT24Display:lt24|ResetSynchroniser:resetGen|resetSync[1] ; 1       ;
+; LT24Display:lt24|ResetSynchroniser:resetGen|resetSync[0] ; 1       ;
+; Total number of inverted registers = 5                   ;         ;
++----------------------------------------------------------+---------+
+
+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                                                     ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+--------------------------------------------------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                                                           ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+--------------------------------------------------------------------------------------+
+; 3:1                ; 2 bits    ; 4 LEs         ; 2 LEs                ; 2 LEs                  ; Yes        ; |MandelbrotTop|ZoomController:zoom_ctrl|x_offset[2]                                  ;
+; 3:1                ; 4 bits    ; 8 LEs         ; 4 LEs                ; 4 LEs                  ; Yes        ; |MandelbrotTop|ZoomController:zoom_ctrl|zoom_level[3]                                ;
+; 3:1                ; 25 bits   ; 50 LEs        ; 0 LEs                ; 50 LEs                 ; Yes        ; |MandelbrotTop|MandelbrotCore:mandelbrot_core|yAddr[7]                               ;
+; 3:1                ; 2 bits    ; 4 LEs         ; 2 LEs                ; 2 LEs                  ; Yes        ; |MandelbrotTop|ZoomController:zoom_ctrl|y_scale[23]                                  ;
+; 5:1                ; 2 bits    ; 6 LEs         ; 4 LEs                ; 2 LEs                  ; Yes        ; |MandelbrotTop|LT24Display:lt24|pixelDataTemp[15]                                    ;
+; 5:1                ; 7 bits    ; 21 LEs        ; 21 LEs               ; 0 LEs                  ; Yes        ; |MandelbrotTop|LT24Display:lt24|pixelDataTemp[13]                                    ;
+; 4:1                ; 9 bits    ; 18 LEs        ; 18 LEs               ; 0 LEs                  ; Yes        ; |MandelbrotTop|ZoomController:zoom_ctrl|x_scale[2]                                   ;
+; 4:1                ; 2 bits    ; 4 LEs         ; 4 LEs                ; 0 LEs                  ; Yes        ; |MandelbrotTop|ZoomController:zoom_ctrl|x_scale[0]                                   ;
+; 4:1                ; 37 bits   ; 74 LEs        ; 37 LEs               ; 37 LEs                 ; Yes        ; |MandelbrotTop|ZoomController:zoom_ctrl|y_scale[8]                                   ;
+; 4:1                ; 20 bits   ; 40 LEs        ; 0 LEs                ; 40 LEs                 ; Yes        ; |MandelbrotTop|MandelbrotCore:mandelbrot_core|c_i[13]                                ;
+; 4:1                ; 22 bits   ; 44 LEs        ; 0 LEs                ; 44 LEs                 ; Yes        ; |MandelbrotTop|MandelbrotCore:mandelbrot_core|c_r[23]                                ;
+; 9:1                ; 16 bits   ; 96 LEs        ; 80 LEs               ; 16 LEs                 ; Yes        ; |MandelbrotTop|MandelbrotCore:mandelbrot_core|iter_cr[1]                             ;
+; 5:1                ; 48 bits   ; 144 LEs       ; 0 LEs                ; 144 LEs                ; Yes        ; |MandelbrotTop|MandelbrotCore:mandelbrot_core|z_i[15]                                ;
+; 6:1                ; 4 bits    ; 16 LEs        ; 12 LEs               ; 4 LEs                  ; Yes        ; |MandelbrotTop|ZoomController:zoom_ctrl|x_offset[23]                                 ;
+; 6:1                ; 15 bits   ; 60 LEs        ; 30 LEs               ; 30 LEs                 ; Yes        ; |MandelbrotTop|ZoomController:zoom_ctrl|x_offset[17]                                 ;
+; 7:1                ; 5 bits    ; 20 LEs        ; 15 LEs               ; 5 LEs                  ; Yes        ; |MandelbrotTop|ZoomController:zoom_ctrl|y_offset[19]                                 ;
+; 7:1                ; 14 bits   ; 56 LEs        ; 28 LEs               ; 28 LEs                 ; Yes        ; |MandelbrotTop|ZoomController:zoom_ctrl|y_offset[6]                                  ;
+; 8:1                ; 8 bits    ; 40 LEs        ; 0 LEs                ; 40 LEs                 ; Yes        ; |MandelbrotTop|LT24Display:lt24|displayData[14]                                      ;
+; 14:1               ; 3 bits    ; 27 LEs        ; 9 LEs                ; 18 LEs                 ; Yes        ; |MandelbrotTop|LT24Display:lt24|displayData[7]                                       ;
+; 16:1               ; 2 bits    ; 20 LEs        ; 8 LEs                ; 12 LEs                 ; Yes        ; |MandelbrotTop|LT24Display:lt24|displayData[3]                                       ;
+; 3:1                ; 2 bits    ; 4 LEs         ; 4 LEs                ; 0 LEs                  ; No         ; |MandelbrotTop|MandelbrotCore:mandelbrot_core|iter_limit[7]                          ;
+; 5:1                ; 4 bits    ; 12 LEs        ; 12 LEs               ; 0 LEs                  ; No         ; |MandelbrotTop|MandelbrotCore:mandelbrot_core|ColourMapper:colour_map|palette_idx[3] ;
+; 8:1                ; 2 bits    ; 10 LEs        ; 8 LEs                ; 2 LEs                  ; No         ; |MandelbrotTop|MandelbrotCore:mandelbrot_core|state                                  ;
+; 10:1               ; 2 bits    ; 12 LEs        ; 8 LEs                ; 4 LEs                  ; No         ; |MandelbrotTop|MandelbrotCore:mandelbrot_core|state                                  ;
+; 8:1                ; 4 bits    ; 20 LEs        ; 12 LEs               ; 8 LEs                  ; No         ; |MandelbrotTop|LT24Display:lt24|Selector8                                            ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+--------------------------------------------------------------------------------------+
+
+
++-----------------------------------------+
+; Source assignments for LT24Display:lt24 ;
++-----------------+-------+------+--------+
+; Assignment      ; Value ; From ; To     ;
++-----------------+-------+------+--------+
+; MESSAGE_DISABLE ; 10030 ; -    ; -      ;
++-----------------+-------+------+--------+
+
+
++-----------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: ZoomController:zoom_ctrl ;
++----------------+----------+-------------------------------------------+
+; Parameter Name ; Value    ; Type                                      ;
++----------------+----------+-------------------------------------------+
+; CLOCK_FREQ     ; 50000000 ; Signed Integer                            ;
+; DATA_WIDTH     ; 24       ; Signed Integer                            ;
+; FRAC_BITS      ; 20       ; Signed Integer                            ;
+; SCREEN_WIDTH   ; 240      ; Signed Integer                            ;
+; SCREEN_HEIGHT  ; 320      ; Signed Integer                            ;
+; PAN_PIXELS     ; 32       ; Signed Integer                            ;
+; MAX_ZOOM_LEVEL ; 12       ; Signed Integer                            ;
++----------------+----------+-------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: MandelbrotCore:mandelbrot_core ;
++----------------+----------+-------------------------------------------------+
+; Parameter Name ; Value    ; Type                                            ;
++----------------+----------+-------------------------------------------------+
+; CLOCK_FREQ     ; 50000000 ; Signed Integer                                  ;
+; DATA_WIDTH     ; 24       ; Signed Integer                                  ;
+; FRAC_BITS      ; 20       ; Signed Integer                                  ;
+; MAX_ITER       ; 256      ; Signed Integer                                  ;
+; SCREEN_WIDTH   ; 240      ; Signed Integer                                  ;
+; SCREEN_HEIGHT  ; 320      ; Signed Integer                                  ;
++----------------+----------+-------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++---------------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator ;
++----------------+-------+--------------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                           ;
++----------------+-------+--------------------------------------------------------------------------------+
+; DATA_WIDTH     ; 24    ; Signed Integer                                                                 ;
+; FRAC_BITS      ; 20    ; Signed Integer                                                                 ;
++----------------+-------+--------------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator|FixedPointMult:mult_zr_sq ;
++----------------+-------+----------------------------------------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                                                     ;
++----------------+-------+----------------------------------------------------------------------------------------------------------+
+; DATA_WIDTH     ; 24    ; Signed Integer                                                                                           ;
+; FRAC_BITS      ; 20    ; Signed Integer                                                                                           ;
++----------------+-------+----------------------------------------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator|FixedPointMult:mult_zi_sq ;
++----------------+-------+----------------------------------------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                                                     ;
++----------------+-------+----------------------------------------------------------------------------------------------------------+
+; DATA_WIDTH     ; 24    ; Signed Integer                                                                                           ;
+; FRAC_BITS      ; 20    ; Signed Integer                                                                                           ;
++----------------+-------+----------------------------------------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator|FixedPointMult:mult_zr_zi ;
++----------------+-------+----------------------------------------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                                                     ;
++----------------+-------+----------------------------------------------------------------------------------------------------------+
+; DATA_WIDTH     ; 24    ; Signed Integer                                                                                           ;
+; FRAC_BITS      ; 20    ; Signed Integer                                                                                           ;
++----------------+-------+----------------------------------------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: MandelbrotCore:mandelbrot_core|ColourMapper:colour_map ;
++----------------+-------+----------------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                                       ;
++----------------+-------+----------------------------------------------------------------------------+
+; MAX_ITER       ; 256   ; Signed Integer                                                             ;
++----------------+-------+----------------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++---------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: LT24Display:lt24 ;
++----------------+----------+-----------------------------------+
+; Parameter Name ; Value    ; Type                              ;
++----------------+----------+-----------------------------------+
+; CLOCK_FREQ     ; 50000000 ; Signed Integer                    ;
+; WIDTH          ; 240      ; Signed Integer                    ;
+; HEIGHT         ; 320      ; Signed Integer                    ;
+; XBITS          ; 8        ; Signed Integer                    ;
+; YBITS          ; 9        ; Signed Integer                    ;
++----------------+----------+-----------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: LT24Display:lt24|LT24InitialData:initDataRom ;
++----------------+-------+------------------------------------------------------------------+
+; Parameter Name ; Value ; Type                                                             ;
++----------------+-------+------------------------------------------------------------------+
+; WIDTH          ; 240   ; Signed Integer                                                   ;
+; HEIGHT         ; 320   ; Signed Integer                                                   ;
++----------------+-------+------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++--------------------------------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: LT24Display:lt24|LT24DisplayInterface:LT24Interface ;
++----------------+----------+----------------------------------------------------------------------+
+; Parameter Name ; Value    ; Type                                                                 ;
++----------------+----------+----------------------------------------------------------------------+
+; CLOCK_FREQ     ; 50000000 ; Signed Integer                                                       ;
++----------------+----------+----------------------------------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-----------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: SevenSegDecoder:zoom_seg ;
++----------------+-------+----------------------------------------------+
+; Parameter Name ; Value ; Type                                         ;
++----------------+-------+----------------------------------------------+
+; NUM_DIGITS     ; 2     ; Signed Integer                               ;
++----------------+-------+----------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: SevenSegDecoder:frame_seg ;
++----------------+-------+-----------------------------------------------+
+; Parameter Name ; Value ; Type                                          ;
++----------------+-------+-----------------------------------------------+
+; NUM_DIGITS     ; 2     ; Signed Integer                                ;
++----------------+-------+-----------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++-------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "SevenSegDecoder:frame_seg"                                                             ;
++---------+--------+----------+-------------------------------------------------------------------------------------+
+; Port    ; Type   ; Severity ; Details                                                                             ;
++---------+--------+----------+-------------------------------------------------------------------------------------+
+; blank   ; Input  ; Info     ; Stuck at GND                                                                        ;
+; display ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++---------+--------+----------+-------------------------------------------------------------------------------------+
+
+
++------------------------------------------------------+
+; Port Connectivity Checks: "SevenSegDecoder:zoom_seg" ;
++-------------+-------+----------+---------------------+
+; Port        ; Type  ; Severity ; Details             ;
++-------------+-------+----------+---------------------+
+; value[7..4] ; Input ; Info     ; Stuck at GND        ;
+; blank       ; Input ; Info     ; Stuck at GND        ;
++-------------+-------+----------+---------------------+
+
+
++--------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "LT24Display:lt24"                                                                       ;
++----------+--------+----------+-------------------------------------------------------------------------------------+
+; Port     ; Type   ; Severity ; Details                                                                             ;
++----------+--------+----------+-------------------------------------------------------------------------------------+
+; cmdData  ; Input  ; Info     ; Stuck at GND                                                                        ;
+; cmdWrite ; Input  ; Info     ; Stuck at GND                                                                        ;
+; cmdDone  ; Input  ; Info     ; Stuck at GND                                                                        ;
+; cmdReady ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++----------+--------+----------+-------------------------------------------------------------------------------------+
+
+
++----------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator|FixedPointMult:mult_zr_zi"     ;
++------------+--------+----------+-------------------------------------------------------------------------------------+
+; Port       ; Type   ; Severity ; Details                                                                             ;
++------------+--------+----------+-------------------------------------------------------------------------------------+
+; result[23] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++------------+--------+----------+-------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------+
+; Post-Synthesis Netlist Statistics for Top Partition ;
++-----------------------+-----------------------------+
+; Type                  ; Count                       ;
++-----------------------+-----------------------------+
+; arriav_ff             ; 478                         ;
+;     CLR               ; 15                          ;
+;     ENA               ; 66                          ;
+;     ENA CLR           ; 29                          ;
+;     ENA CLR SCLR      ; 15                          ;
+;     ENA CLR SLD       ; 5                           ;
+;     ENA SCLR          ; 92                          ;
+;     ENA SCLR SLD      ; 48                          ;
+;     ENA SLD           ; 113                         ;
+;     SCLR              ; 6                           ;
+;     SLD               ; 1                           ;
+;     plain             ; 88                          ;
+; arriav_lcell_comb     ; 965                         ;
+;     arith             ; 354                         ;
+;         1 data inputs ; 109                         ;
+;         2 data inputs ; 199                         ;
+;         3 data inputs ; 46                          ;
+;     extend            ; 2                           ;
+;         7 data inputs ; 2                           ;
+;     normal            ; 478                         ;
+;         0 data inputs ; 2                           ;
+;         1 data inputs ; 9                           ;
+;         2 data inputs ; 39                          ;
+;         3 data inputs ; 106                         ;
+;         4 data inputs ; 68                          ;
+;         5 data inputs ; 79                          ;
+;         6 data inputs ; 175                         ;
+;     shared            ; 131                         ;
+;         0 data inputs ; 1                           ;
+;         1 data inputs ; 10                          ;
+;         2 data inputs ; 96                          ;
+;         3 data inputs ; 24                          ;
+; arriav_mac            ; 3                           ;
+; boundary_port         ; 89                          ;
+;                       ;                             ;
+; Max LUT depth         ; 6.40                        ;
+; Average LUT depth     ; 3.25                        ;
++-----------------------+-----------------------------+
+
+
++-------------------------------+
+; Elapsed Time Per Partition    ;
++----------------+--------------+
+; Partition Name ; Elapsed Time ;
++----------------+--------------+
+; Top            ; 00:00:02     ;
++----------------+--------------+
+
+
++-------------------------------+
+; Analysis & Synthesis Messages ;
++-------------------------------+
+Info: *******************************************************************
+Info: Running Quartus Prime Analysis & Synthesis
+    Info: Version 22.1std.2 Build 922 07/20/2023 SC Lite Edition
+    Info: Processing started: Fri Apr 24 19:38:11 2026
+Info: Command: quartus_map --read_settings_files=on --write_settings_files=off MandelbrotFPGA -c MandelbrotFPGA
+Info (20032): Parallel compilation is enabled and will use up to 4 processors
+Info (12021): Found 1 design units, including 1 entities, in source file rtl/mandelbrottop.v
+    Info (12023): Found entity 1: MandelbrotTop File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 51
+Info (12021): Found 1 design units, including 1 entities, in source file rtl/mandelbrotcore.v
+    Info (12023): Found entity 1: MandelbrotCore File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotCore.v Line: 52
+Info (12021): Found 1 design units, including 1 entities, in source file rtl/mandelbrotiterator.v
+    Info (12023): Found entity 1: MandelbrotIterator File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotIterator.v Line: 45
+Info (12021): Found 1 design units, including 1 entities, in source file rtl/fixedpointmult.v
+    Info (12023): Found entity 1: FixedPointMult File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/FixedPointMult.v Line: 34
+Info (12021): Found 1 design units, including 1 entities, in source file rtl/colourmapper.v
+    Info (12023): Found entity 1: ColourMapper File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 42
+Info (12021): Found 1 design units, including 1 entities, in source file rtl/zoomcontroller.v
+    Info (12023): Found entity 1: ZoomController File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ZoomController.v Line: 32
+Info (12021): Found 1 design units, including 1 entities, in source file rtl/sevensegdecoder.v
+    Info (12023): Found entity 1: SevenSegDecoder File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/SevenSegDecoder.v Line: 37
+Info (12021): Found 4 design units, including 4 entities, in source file /users/ahsuuu/documents/claude/projects/fpga/elec5566m-resources/samplecode/unita-1/hpswrapper/synthesis/submodules/lt24display.v
+    Info (12023): Found entity 1: LT24Display File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/ELEC5566M-Resources/sampleCode/UnitA-1/HPSWrapper/synthesis/submodules/LT24Display.v Line: 86
+    Info (12023): Found entity 2: LT24DisplayInterface File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/ELEC5566M-Resources/sampleCode/UnitA-1/HPSWrapper/synthesis/submodules/LT24Display.v Line: 409
+    Info (12023): Found entity 3: ResetSynchroniser File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/ELEC5566M-Resources/sampleCode/UnitA-1/HPSWrapper/synthesis/submodules/LT24Display.v Line: 493
+    Info (12023): Found entity 4: LT24InitialData File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/ELEC5566M-Resources/sampleCode/UnitA-1/HPSWrapper/synthesis/submodules/LT24Display.v Line: 523
+Info (12127): Elaborating entity "MandelbrotTop" for the top level hierarchy
+Info (12128): Elaborating entity "ZoomController" for hierarchy "ZoomController:zoom_ctrl" File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 251
+Info (12128): Elaborating entity "MandelbrotCore" for hierarchy "MandelbrotCore:mandelbrot_core" File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 287
+Warning (10230): Verilog HDL assignment warning at MandelbrotCore.v(267): truncated value with size 32 to match size of target (9) File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotCore.v Line: 267
+Warning (10230): Verilog HDL assignment warning at MandelbrotCore.v(287): truncated value with size 32 to match size of target (8) File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotCore.v Line: 287
+Warning (10230): Verilog HDL assignment warning at MandelbrotCore.v(306): truncated value with size 32 to match size of target (9) File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotCore.v Line: 306
+Info (12128): Elaborating entity "MandelbrotIterator" for hierarchy "MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator" File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotCore.v Line: 148
+Warning (10230): Verilog HDL assignment warning at MandelbrotIterator.v(62): truncated value with size 32 to match size of target (24) File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotIterator.v Line: 62
+Info (12128): Elaborating entity "FixedPointMult" for hierarchy "MandelbrotCore:mandelbrot_core|MandelbrotIterator:iterator|FixedPointMult:mult_zr_sq" File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotIterator.v Line: 82
+Info (12128): Elaborating entity "ColourMapper" for hierarchy "MandelbrotCore:mandelbrot_core|ColourMapper:colour_map" File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotCore.v Line: 162
+Warning (10030): Net "blue_gold.data_a" at ColourMapper.v(78) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 78
+Warning (10030): Net "blue_gold.waddr_a" at ColourMapper.v(78) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 78
+Warning (10030): Net "fire.data_a" at ColourMapper.v(79) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 79
+Warning (10030): Net "fire.waddr_a" at ColourMapper.v(79) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 79
+Warning (10030): Net "ice.data_a" at ColourMapper.v(80) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 80
+Warning (10030): Net "ice.waddr_a" at ColourMapper.v(80) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 80
+Warning (10030): Net "electric.data_a" at ColourMapper.v(81) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 81
+Warning (10030): Net "electric.waddr_a" at ColourMapper.v(81) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 81
+Warning (10030): Net "smooth_cycle.data_a" at ColourMapper.v(177) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 177
+Warning (10030): Net "smooth_cycle.waddr_a" at ColourMapper.v(177) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 177
+Warning (10030): Net "blue_gold.we_a" at ColourMapper.v(78) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 78
+Warning (10030): Net "fire.we_a" at ColourMapper.v(79) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 79
+Warning (10030): Net "ice.we_a" at ColourMapper.v(80) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 80
+Warning (10030): Net "electric.we_a" at ColourMapper.v(81) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 81
+Warning (10030): Net "smooth_cycle.we_a" at ColourMapper.v(177) has no driver or initial value, using a default initial value '0' File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 177
+Info (12128): Elaborating entity "LT24Display" for hierarchy "LT24Display:lt24" File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 317
+Info (12128): Elaborating entity "ResetSynchroniser" for hierarchy "LT24Display:lt24|ResetSynchroniser:resetGen" File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/ELEC5566M-Resources/sampleCode/UnitA-1/HPSWrapper/synthesis/submodules/LT24Display.v Line: 157
+Info (12128): Elaborating entity "LT24InitialData" for hierarchy "LT24Display:lt24|LT24InitialData:initDataRom" File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/ELEC5566M-Resources/sampleCode/UnitA-1/HPSWrapper/synthesis/submodules/LT24Display.v Line: 174
+Info (12128): Elaborating entity "LT24DisplayInterface" for hierarchy "LT24Display:lt24|LT24DisplayInterface:LT24Interface" File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/ELEC5566M-Resources/sampleCode/UnitA-1/HPSWrapper/synthesis/submodules/LT24Display.v Line: 392
+Info (12128): Elaborating entity "SevenSegDecoder" for hierarchy "SevenSegDecoder:zoom_seg" File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 332
+Info (276014): Found 5 instances of uninferred RAM logic
+    Info (276004): RAM logic "LT24Display:lt24|LT24InitialData:initDataRom|ROM" is uninferred due to inappropriate RAM size File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/ELEC5566M-Resources/sampleCode/UnitA-1/HPSWrapper/synthesis/submodules/LT24Display.v Line: 540
+    Info (276004): RAM logic "MandelbrotCore:mandelbrot_core|ColourMapper:colour_map|blue_gold" is uninferred due to inappropriate RAM size File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 78
+    Info (276004): RAM logic "MandelbrotCore:mandelbrot_core|ColourMapper:colour_map|fire" is uninferred due to inappropriate RAM size File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 79
+    Info (276004): RAM logic "MandelbrotCore:mandelbrot_core|ColourMapper:colour_map|ice" is uninferred due to inappropriate RAM size File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 80
+    Info (276004): RAM logic "MandelbrotCore:mandelbrot_core|ColourMapper:colour_map|electric" is uninferred due to inappropriate RAM size File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v Line: 81
+Warning (13024): Output pins are stuck at VCC or GND
+    Warning (13410): Pin "HEX1[0]" is stuck at GND File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 60
+    Warning (13410): Pin "HEX1[1]" is stuck at GND File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 60
+    Warning (13410): Pin "HEX1[2]" is stuck at GND File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 60
+    Warning (13410): Pin "HEX1[3]" is stuck at GND File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 60
+    Warning (13410): Pin "HEX1[4]" is stuck at GND File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 60
+    Warning (13410): Pin "HEX1[5]" is stuck at GND File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 60
+    Warning (13410): Pin "HEX1[6]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 60
+    Warning (13410): Pin "HEX2[0]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 61
+    Warning (13410): Pin "HEX2[1]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 61
+    Warning (13410): Pin "HEX2[2]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 61
+    Warning (13410): Pin "HEX2[3]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 61
+    Warning (13410): Pin "HEX2[4]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 61
+    Warning (13410): Pin "HEX2[5]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 61
+    Warning (13410): Pin "HEX2[6]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 61
+    Warning (13410): Pin "HEX3[0]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 62
+    Warning (13410): Pin "HEX3[1]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 62
+    Warning (13410): Pin "HEX3[2]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 62
+    Warning (13410): Pin "HEX3[3]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 62
+    Warning (13410): Pin "HEX3[4]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 62
+    Warning (13410): Pin "HEX3[5]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 62
+    Warning (13410): Pin "HEX3[6]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 62
+    Warning (13410): Pin "HEX4[0]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 63
+    Warning (13410): Pin "HEX4[1]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 63
+    Warning (13410): Pin "HEX4[2]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 63
+    Warning (13410): Pin "HEX4[3]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 63
+    Warning (13410): Pin "HEX4[4]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 63
+    Warning (13410): Pin "HEX4[5]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 63
+    Warning (13410): Pin "HEX4[6]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 63
+    Warning (13410): Pin "HEX5[0]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 64
+    Warning (13410): Pin "HEX5[1]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 64
+    Warning (13410): Pin "HEX5[2]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 64
+    Warning (13410): Pin "HEX5[3]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 64
+    Warning (13410): Pin "HEX5[4]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 64
+    Warning (13410): Pin "HEX5[5]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 64
+    Warning (13410): Pin "HEX5[6]" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 64
+    Warning (13410): Pin "LT24CS_n" is stuck at GND File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 65
+    Warning (13410): Pin "LT24Rd_n" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 67
+    Warning (13410): Pin "LT24LCDOn" is stuck at VCC File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 70
+Info (286030): Timing-Driven Synthesis is running
+Info (17049): 8 registers lost all their fanouts during netlist optimizations.
+Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
+    Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
+Warning (21074): Design contains 1 input pin(s) that do not drive logic
+    Warning (15610): No output dependent on input pin "KEY[3]" File: C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v Line: 56
+Info (21057): Implemented 1143 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 15 input pins
+    Info (21059): Implemented 74 output pins
+    Info (21061): Implemented 1051 logic cells
+    Info (21062): Implemented 3 DSP elements
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 60 warnings
+    Info: Peak virtual memory: 4879 megabytes
+    Info: Processing ended: Fri Apr 24 19:38:36 2026
+    Info: Elapsed time: 00:00:25
+    Info: Total CPU time (on all processors): 00:00:22
+
+

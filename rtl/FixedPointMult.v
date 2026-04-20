@@ -1,0 +1,53 @@
+////////////////////////////////////////////////////////////////////////////////
+// Module:      FixedPointMult
+// Author:      Ashok G C
+// Date:        2026-04-20
+// Description: Parameterised signed fixed-point multiplier.
+//              Multiplies two Q(INT.FRAC) signed fixed-point numbers and
+//              returns a result in the same Q(INT.FRAC) format by extracting
+//              the relevant bits from the full-width product.
+//
+//              This is a purely combinational module — no clock required.
+//              On the Cyclone V, a 24x24 signed multiply maps to 2 DSP blocks.
+//              An 18x18 signed multiply maps to a single DSP block.
+//
+// Parameters:
+//   DATA_WIDTH - Total bit width of each operand and result (default: 24)
+//   FRAC_BITS  - Number of fractional bits in the fixed-point format (default: 20)
+//
+//              Format: 1 sign bit | (DATA_WIDTH-1-FRAC_BITS) integer bits | FRAC_BITS frac bits
+//              Example (24-bit, 20 frac = Q4.20):
+//                Range    : -8.0 to +7.999999 (approx)
+//                Precision: 2^-20 ~= 9.54e-7
+//
+// Ports:
+//   a      [input,  DATA_WIDTH]     - First operand (signed fixed-point)
+//   b      [input,  DATA_WIDTH]     - Second operand (signed fixed-point)
+//   result [output, DATA_WIDTH]     - Product in same fixed-point format
+//
+// Overflow behaviour:
+//   If the true product overflows the output range, the result wraps (truncates).
+//   Callers must ensure operands stay within the representable range to avoid
+//   overflow (guaranteed by the Mandelbrot escape condition: |z| <= 2).
+////////////////////////////////////////////////////////////////////////////////
+
+module FixedPointMult #(
+    parameter DATA_WIDTH = 24,   // Total bit width of operands and result
+    parameter FRAC_BITS  = 20    // Number of fractional bits (Q4.20 by default)
+)(
+    input  wire signed [DATA_WIDTH-1:0] a,       // First operand
+    input  wire signed [DATA_WIDTH-1:0] b,       // Second operand
+    output wire signed [DATA_WIDTH-1:0] result   // Product in Q(DATA_WIDTH-1-FRAC_BITS).FRAC_BITS
+);
+
+    // Full-precision product: 2*DATA_WIDTH bits
+    // Signed multiplication of two DATA_WIDTH-bit values
+    wire signed [2*DATA_WIDTH-1:0] product;
+    assign product = a * b;
+
+    // Extract the correctly-scaled result.
+    // The integer part begins at bit (FRAC_BITS) and the result is DATA_WIDTH bits wide.
+    // We discard the lower FRAC_BITS bits (sub-LSB precision) and the upper bits (overflow guard).
+    assign result = product[DATA_WIDTH + FRAC_BITS - 1 : FRAC_BITS];
+
+endmodule

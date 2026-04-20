@@ -1,0 +1,83 @@
+////////////////////////////////////////////////////////////////////////////////
+// Module:      SevenSegDecoder
+// Author:      Ashok G C
+// Date:        2026-04-20
+// Description: Parameterised N-digit hexadecimal to 7-segment decoder.
+//              Converts an N*4-bit binary input to N active-low 7-segment
+//              display outputs for the DE1-SoC HEX displays.
+//
+//              Segment encoding (active-low, standard 7-segment):
+//
+//                  aaa
+//                 f   b
+//                 f   b
+//                  ggg
+//                 e   c
+//                 e   c
+//                  ddd  (dp)
+//
+//              Output bit mapping: seg[6]=g, seg[5]=f, seg[4]=e, seg[3]=d,
+//                                  seg[2]=c, seg[1]=b, seg[0]=a
+//
+//              Reuses the decoding approach from Unit 2.1 lab exercises.
+//              Extended with 'blank' (all segments off) for display control.
+//
+// Parameters:
+//   NUM_DIGITS - Number of 7-segment display digits (default: 2)
+//
+// Ports:
+//   value   [input,  NUM_DIGITS*4] - Hexadecimal value to display
+//   blank   [input,  NUM_DIGITS]   - Per-digit blank control (1 = blank that digit)
+//   display [output, NUM_DIGITS*7] - Active-low 7-segment outputs, packed LSB first
+//                                    display[6:0]   = digit 0 (rightmost)
+//                                    display[13:7]  = digit 1
+//                                    etc.
+////////////////////////////////////////////////////////////////////////////////
+
+module SevenSegDecoder #(
+    parameter NUM_DIGITS = 2   // Number of 7-segment display digits
+)(
+    input  wire [NUM_DIGITS*4-1:0] value,    // Packed hex input (4 bits per digit)
+    input  wire [NUM_DIGITS-1:0]   blank,    // Per-digit blank enable (1 = all segments off)
+    output wire [NUM_DIGITS*7-1:0] display   // Active-low 7-segment outputs (7 bits per digit)
+);
+
+    // -------------------------------------------------------------------------
+    // Single-digit hex to 7-segment lookup (active-low outputs)
+    // -------------------------------------------------------------------------
+    function [6:0] hex_to_seg;
+        input [3:0] hex_digit;
+        case (hex_digit)
+            4'h0: hex_to_seg = 7'b1000000; // 0
+            4'h1: hex_to_seg = 7'b1111001; // 1
+            4'h2: hex_to_seg = 7'b0100100; // 2
+            4'h3: hex_to_seg = 7'b0110000; // 3
+            4'h4: hex_to_seg = 7'b0011001; // 4
+            4'h5: hex_to_seg = 7'b0010010; // 5
+            4'h6: hex_to_seg = 7'b0000010; // 6
+            4'h7: hex_to_seg = 7'b1111000; // 7
+            4'h8: hex_to_seg = 7'b0000000; // 8
+            4'h9: hex_to_seg = 7'b0010000; // 9
+            4'hA: hex_to_seg = 7'b0001000; // A
+            4'hB: hex_to_seg = 7'b0000011; // B
+            4'hC: hex_to_seg = 7'b1000110; // C
+            4'hD: hex_to_seg = 7'b0100001; // D
+            4'hE: hex_to_seg = 7'b0000110; // E
+            4'hF: hex_to_seg = 7'b0001110; // F
+            default: hex_to_seg = 7'b1111111; // All off (blank)
+        endcase
+    endfunction
+
+    // -------------------------------------------------------------------------
+    // Generate one decoder per digit using a generate block.
+    // Each digit takes 4 bits from value and 1 bit from blank.
+    // -------------------------------------------------------------------------
+    genvar i;
+    generate
+        for (i = 0; i < NUM_DIGITS; i = i + 1) begin : digit_decode
+            assign display[i*7 +: 7] = blank[i] ? 7'b1111111              // Blank: all segs off
+                                                 : hex_to_seg(value[i*4 +: 4]); // Decode hex digit
+        end
+    endgenerate
+
+endmodule

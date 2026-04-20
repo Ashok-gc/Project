@@ -1,0 +1,366 @@
+////////////////////////////////////////////////////////////////////////////////
+// Module:      MandelbrotTop
+// Author:      Sisam Bhattarai
+// Date:        2026-04-20
+// Description: Top-level module for the FPGA Mandelbrot / Julia Set Explorer.
+//              Targets the Terasic DE1-SoC board (Intel Cyclone V, 5CSEMA5F31C6).
+//              Displays an interactive fractal on the LT24 LCD (240x320).
+//
+//              Module Hierarchy:
+//                MandelbrotTop
+//                ├── LT24Display        (provided IP — LCD driver, T. Carpenter, UoL)
+//                ├── MandelbrotCore     (rendering FSM + computation engine)
+//                │   ├── MandelbrotIterator  (one z→z²+c step, combinational)
+//                │   │   └── FixedPointMult  (×3: z_r², z_i², z_r·z_i)
+//                │   └── ColourMapper        (iter count → RGB565, 4 palettes)
+//                ├── ZoomController     (viewport FSM + julia_cr/ci output)
+//                └── SevenSegDecoder    (zoom level + frame counter display)
+//
+//              User Controls:
+//                KEY[0] (active-low) - System reset
+//                KEY[1] (active-low) - Zoom in
+//                KEY[2] (active-low) - Zoom out
+//                SW[1:0]             - Colour palette (0=Blue-Gold 1=Fire
+//                                                      2=Ice 3=Electric)
+//                SW[2]  (high)       - Julia Set mode (OFF = Mandelbrot)
+//                SW[4]  (high)       - Pan left
+//                SW[5]  (high)       - Pan right
+//                SW[6]  (high)       - Pan up
+//                SW[7]  (high)       - Pan down
+//                SW[9:8]             - Iteration depth (00=32 01=64 10=128 11=256)
+//
+//              Display:
+//                LCD         - 240×320 fractal rendering
+//                HEX1:HEX0   - Current zoom level (00–0C)
+//                HEX3:HEX2   - Completed frame count (wraps at FF)
+//                HEX5:HEX4   - Blank
+//                LEDR[0]     - Rendering in progress
+//                LEDR[2:1]   - Palette selection indicator
+//                LEDR[3]     - Julia mode indicator
+//                LEDR[9:4]   - Rendering progress thermometer (6 LEDs)
+//
+//              Julia Set tip:
+//                Zoom into an interesting Mandelbrot region, then flip SW[2].
+//                The viewport centre becomes the Julia parameter c, revealing
+//                the Julia set for that complex number.
+//
+// References:
+//   LT24Display.v — T. Carpenter, University of Leeds, 2017.
+////////////////////////////////////////////////////////////////////////////////
+
+module MandelbrotTop (
+    // =========================================================================
+    // DE1-SoC Fixed Pins
+    // =========================================================================
+    input  wire        CLOCK_50,
+    input  wire [3:0]  KEY,
+    input  wire [9:0]  SW,
+    output wire [9:0]  LEDR,
+    output wire [6:0]  HEX0,
+    output wire [6:0]  HEX1,
+    output wire [6:0]  HEX2,
+    output wire [6:0]  HEX3,
+    output wire [6:0]  HEX4,
+    output wire [6:0]  HEX5,
+    output wire        LT24CS_n,
+    output wire        LT24RS,
+    output wire        LT24Rd_n,
+    output wire        LT24Wr_n,
+    output wire [15:0] LT24Data,
+    output wire        LT24LCDOn,
+    output wire        LT24Reset_n
+);
+
+    // =========================================================================
+    // Parameters
+    // =========================================================================
+    localparam CLOCK_FREQ    = 50_000_000;
+    localparam DATA_WIDTH    = 24;
+    localparam FRAC_BITS     = 20;
+    localparam MAX_ITER      = 256;
+    localparam SCREEN_WIDTH  = 240;
+    localparam SCREEN_HEIGHT = 320;
+
+    // =========================================================================
+    // Clock and Reset
+    // =========================================================================
+    wire globalReset = ~KEY[0];
+    wire reset;   // resetApp from LT24Display
+
+    // =========================================================================
+    // LT24 Pixel Interface wires
+    // =========================================================================
+    wire [7:0]  xAddr;
+    wire [8:0]  yAddr;
+    wire [15:0] pixelData;
+    wire        pixelWrite;
+    wire        pixelReady;
+    wire        pixelRawMode;
+
+    wire [7:0]  cmdData  = 8'h00;
+    wire        cmdWrite = 1'b0;
+    wire        cmdDone  = 1'b0;
+    wire        cmdReady;
+
+    // =========================================================================
+    // Viewport wires (ZoomController → MandelbrotCore)
+    // =========================================================================
+    wire signed [DATA_WIDTH-1:0] x_offset, y_offset, x_scale, y_scale;
+    wire signed [DATA_WIDTH-1:0] julia_cr, julia_ci;
+    wire [3:0]  zoom_level;
+    wire        render_trigger;
+
+    // =========================================================================
+    // Status wires
+    // =========================================================================
+    wire        rendering;
+    wire [7:0]  frame_count;
+    wire [8:0]  render_row;
+
+    // =========================================================================
+    // Free-running interior colour cycle timer (independent of render speed)
+    // =========================================================================
+    // 29-bit counter at 50 MHz.  cycle_count = timer[28:21]:
+    //   Each step = 2^21 cycles / 50 MHz = 41.9 ms
+    //   256-entry palette × 41.9 ms = ~10.7 s per full colour cycle
+    //
+    // At ~2 fps (64-iter depth), one frame takes ~500 ms:
+    //   500 ms / 41.9 ms ≈ 12 palette steps per frame  →  smooth gradual shift
+    // =========================================================================
+    reg [28:0] cycle_timer;
+    always @(posedge CLOCK_50)
+        cycle_timer <= cycle_timer + 29'd1;
+
+    wire [7:0] cycle_count = cycle_timer[28:21]; // full 8 bits → 256-entry palette
+
+    // =========================================================================
+    // Auto re-render: detect falling edge of 'rendering' (frame just finished)
+    // and immediately fire another render_trigger so the display refreshes
+    // continuously — making the interior colour animation actually visible.
+    //
+    //   rendering  1→0  (NEXT_ROW final state, frame complete)
+    //      ↓
+    //   auto_render_trigger pulses 1 cycle
+    //      ↓
+    //   combined_trigger → MandelbrotCore starts the next frame immediately
+    // =========================================================================
+    reg rendering_d;
+    always @(posedge CLOCK_50)
+        rendering_d <= rendering;
+
+    wire auto_render_trigger = rendering_d & ~rendering; // 1 cycle on frame done
+    wire combined_trigger    = render_trigger | auto_render_trigger;
+
+    // =========================================================================
+    // Button debouncing (2-FF synchroniser)
+    // =========================================================================
+    reg key1_ff1, key1_ff2;
+    reg key2_ff1, key2_ff2;
+
+    always @(posedge CLOCK_50) begin
+        key1_ff1 <= ~KEY[1];
+        key1_ff2 <= key1_ff1;
+        key2_ff1 <= ~KEY[2];
+        key2_ff2 <= key2_ff1;
+    end
+
+    wire key_zoom_in  = key1_ff2;
+    wire key_zoom_out = key2_ff2;
+
+    // =========================================================================
+    // Control signal mapping
+    //   SW[1:0] — palette_sel (4 palettes)
+    //   SW[2]   — julia_mode  (also enables animated Julia sweep)
+    //   SW[3]   — burning_ship (Burning Ship fractal mode)
+    //   SW[7:4] — pan (left/right/up/down)
+    //   SW[9:8] — max_iter_sel (iteration depth)
+    // =========================================================================
+    wire [1:0] palette_sel   = SW[1:0];
+    wire       julia_mode    = SW[2];
+    wire       burning_ship  = SW[3];
+    wire [3:0] sw_pan        = SW[7:4];
+    wire [1:0] max_iter_sel  = SW[9:8];
+
+    // =========================================================================
+    // Animated Julia sweep
+    // =========================================================================
+    // 30-bit counter: bits [29:27] select 1 of 8 famous Julia parameters.
+    // Each parameter is displayed for 2^27 / 50 MHz = 2.68 s before advancing.
+    // Full 8-parameter cycle = ~21 seconds.
+    //
+    // Famous Julia set parameters (c values in Q4.20, × 2^20 = 1 048 576):
+    //   0: -0.700 + 0.270i — connected filaments
+    //   1: -0.400 + 0.600i — dendritic tree
+    //   2:  0.285 + 0.010i — classic connected boundary
+    //   3: -0.835 - 0.232i — Douady's rabbit
+    //   4: -0.800 + 0.156i — Siegel disk spiral
+    //   5:  0.000 + 0.800i — symmetric dendrite
+    //   6: -0.500 + 0.500i — spiral galaxy
+    //   7: -0.100 + 0.651i — seahorse spirals
+    // =========================================================================
+    reg [29:0] julia_timer;
+    always @(posedge CLOCK_50)
+        julia_timer <= julia_timer + 30'd1;
+
+    wire [2:0] julia_sweep_idx = julia_timer[29:27];
+
+    reg signed [DATA_WIDTH-1:0] swept_julia_cr, swept_julia_ci;
+    always @(*) begin
+        case (julia_sweep_idx)
+            3'd0: begin swept_julia_cr = -24'sd734003;  swept_julia_ci =  24'sd283115; end
+            3'd1: begin swept_julia_cr = -24'sd419430;  swept_julia_ci =  24'sd629145; end
+            3'd2: begin swept_julia_cr =  24'sd298844;  swept_julia_ci =  24'sd10485;  end
+            3'd3: begin swept_julia_cr = -24'sd875560;  swept_julia_ci = -24'sd243483; end
+            3'd4: begin swept_julia_cr = -24'sd838860;  swept_julia_ci =  24'sd163577; end
+            3'd5: begin swept_julia_cr =  24'sd0;       swept_julia_ci =  24'sd838860; end
+            3'd6: begin swept_julia_cr = -24'sd524288;  swept_julia_ci =  24'sd524288; end
+            3'd7: begin swept_julia_cr = -24'sd104858;  swept_julia_ci =  24'sd682630; end
+        endcase
+    end
+
+    // When julia_mode=1 use the animated sweep; viewport-derived values
+    // are still used for Mandelbrot mode (julia_mode=0).
+    wire signed [DATA_WIDTH-1:0] active_julia_cr = julia_mode ? swept_julia_cr : julia_cr;
+    wire signed [DATA_WIDTH-1:0] active_julia_ci = julia_mode ? swept_julia_ci : julia_ci;
+
+    // =========================================================================
+    // ZoomController instance
+    // =========================================================================
+    ZoomController #(
+        .CLOCK_FREQ    (CLOCK_FREQ   ),
+        .DATA_WIDTH    (DATA_WIDTH   ),
+        .FRAC_BITS     (FRAC_BITS    ),
+        .SCREEN_WIDTH  (SCREEN_WIDTH ),
+        .SCREEN_HEIGHT (SCREEN_HEIGHT),
+        .PAN_PIXELS    (32           ),
+        .MAX_ZOOM_LEVEL(12           )
+    ) zoom_ctrl (
+        .clk           (CLOCK_50      ),
+        .reset         (reset         ),
+        .key_zoom_in   (key_zoom_in   ),
+        .key_zoom_out  (key_zoom_out  ),
+        .sw_pan        (sw_pan        ),
+        .x_offset      (x_offset      ),
+        .y_offset      (y_offset      ),
+        .x_scale       (x_scale       ),
+        .y_scale       (y_scale       ),
+        .zoom_level    (zoom_level    ),
+        .render_trigger(render_trigger),
+        .julia_cr      (julia_cr      ),
+        .julia_ci      (julia_ci      )
+    );
+
+    // =========================================================================
+    // MandelbrotCore instance
+    // =========================================================================
+    MandelbrotCore #(
+        .CLOCK_FREQ    (CLOCK_FREQ   ),
+        .DATA_WIDTH    (DATA_WIDTH   ),
+        .FRAC_BITS     (FRAC_BITS    ),
+        .MAX_ITER      (MAX_ITER     ),
+        .SCREEN_WIDTH  (SCREEN_WIDTH ),
+        .SCREEN_HEIGHT (SCREEN_HEIGHT)
+    ) mandelbrot_core (
+        .clk           (CLOCK_50      ),
+        .reset         (reset         ),
+        .render_trigger(combined_trigger),
+        .x_offset      (x_offset      ),
+        .y_offset      (y_offset      ),
+        .x_scale       (x_scale       ),
+        .y_scale       (y_scale       ),
+        .julia_mode    (julia_mode      ),
+        .julia_cr      (active_julia_cr ),  // animated sweep when julia_mode=1
+        .julia_ci      (active_julia_ci ),
+        .palette_sel   (palette_sel     ),
+        .max_iter_sel  (max_iter_sel    ),
+        .cycle_count   (cycle_count     ),
+        .burning_ship  (burning_ship    ),
+        .xAddr         (xAddr         ),
+        .yAddr         (yAddr         ),
+        .pixelData     (pixelData     ),
+        .pixelWrite    (pixelWrite    ),
+        .pixelReady    (pixelReady    ),
+        .pixelRawMode  (pixelRawMode  ),
+        .rendering     (rendering     ),
+        .frame_count   (frame_count   ),
+        .render_row    (render_row    )
+    );
+
+    // =========================================================================
+    // LT24Display instance
+    // =========================================================================
+    LT24Display #(
+        .CLOCK_FREQ(CLOCK_FREQ   ),
+        .WIDTH     (SCREEN_WIDTH ),
+        .HEIGHT    (SCREEN_HEIGHT)
+    ) lt24 (
+        .clock        (CLOCK_50     ),
+        .globalReset  (globalReset  ),
+        .resetApp     (reset        ),
+        .xAddr        (xAddr        ),
+        .yAddr        (yAddr        ),
+        .pixelData    (pixelData    ),
+        .pixelWrite   (pixelWrite   ),
+        .pixelReady   (pixelReady   ),
+        .pixelRawMode (pixelRawMode ),
+        .cmdData      (cmdData      ),
+        .cmdWrite     (cmdWrite     ),
+        .cmdDone      (cmdDone      ),
+        .cmdReady     (cmdReady     ),
+        .LT24Wr_n     (LT24Wr_n    ),
+        .LT24Rd_n     (LT24Rd_n    ),
+        .LT24CS_n     (LT24CS_n    ),
+        .LT24RS       (LT24RS      ),
+        .LT24Reset_n  (LT24Reset_n ),
+        .LT24Data     (LT24Data    ),
+        .LT24LCDOn    (LT24LCDOn   )
+    );
+
+    // =========================================================================
+    // 7-Segment displays
+    //   HEX1:HEX0 — Zoom level  (00 to 0C)
+    //   HEX3:HEX2 — Frame count (00 to FF)
+    //   HEX5:HEX4 — Blank
+    // =========================================================================
+    wire [13:0] zoom_display;
+    wire [13:0] frame_display;
+
+    SevenSegDecoder #(.NUM_DIGITS(2)) zoom_seg (
+        .value  ({4'b0000, zoom_level}),
+        .blank  (2'b00               ),
+        .display(zoom_display        )
+    );
+
+    SevenSegDecoder #(.NUM_DIGITS(2)) frame_seg (
+        .value  (frame_count  ),
+        .blank  (2'b00        ),
+        .display(frame_display)
+    );
+
+    assign HEX0 = zoom_display[6:0];
+    assign HEX1 = zoom_display[13:7];
+    assign HEX2 = 7'b1111111;   // blank (frame_count meaningless with auto-render)
+    assign HEX3 = 7'b1111111;   // blank
+    assign HEX4 = 7'b1111111;   // blank
+    assign HEX5 = 7'b1111111;   // blank
+
+    // =========================================================================
+    // LED outputs
+    //   LEDR[0]   — Rendering active
+    //   LEDR[2:1] — Palette selection (visual indicator)
+    //   LEDR[3]   — Julia mode active
+    //   LEDR[9:4] — Rendering progress thermometer (6 LEDs, ~53 rows each)
+    // =========================================================================
+    assign LEDR[0]   = rendering;
+    assign LEDR[2:1] = palette_sel;
+    assign LEDR[3]   = julia_mode;
+
+    // Progress bar: each LED lights when rendering has passed that row threshold
+    assign LEDR[4]   = rendering && (render_row >= 9'd0);    // always on when rendering
+    assign LEDR[5]   = rendering && (render_row >= 9'd53);
+    assign LEDR[6]   = rendering && (render_row >= 9'd106);
+    assign LEDR[7]   = rendering && (render_row >= 9'd160);
+    assign LEDR[8]   = rendering && (render_row >= 9'd213);
+    assign LEDR[9]   = rendering && (render_row >= 9'd266);
+
+endmodule

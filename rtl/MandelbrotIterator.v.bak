@@ -1,0 +1,110 @@
+////////////////////////////////////////////////////////////////////////////////
+// Module:      MandelbrotIterator
+// Author:      Sisam Bhattarai
+// Date:        2026-04-20
+// Description: Computes one step of the Mandelbrot / Julia / Burning Ship
+//              iteration formula.
+//
+//              Mandelbrot / Julia mode (burning_ship = 0):
+//                z_{n+1} = z_n^2 + c
+//                z_r' = z_r*z_r - z_i*z_i + c_r
+//                z_i' = 2 * z_r * z_i      + c_i
+//
+//              Burning Ship mode (burning_ship = 1):
+//                z_{n+1} = (|Re(z)| + i|Im(z)|)^2 + c
+//                z_r' = z_r*z_r - z_i*z_i + c_r    (unchanged — squaring removes sign)
+//                z_i' = 2 * |z_r| * |z_i| + c_i    (absolute values in cross term only)
+//
+//              The escape condition |z|^2 > 4 is identical in both modes.
+//
+//              This is a purely combinational module — registers are held in
+//              the parent MandelbrotCore FSM.
+//              Three FixedPointMult instances handle z_r^2, z_i^2, cross term.
+//              Multiplication by 2 in the z_i' update is a left-shift (free).
+//
+// Parameters:
+//   DATA_WIDTH - Bit width of all fixed-point values (default: 24)
+//   FRAC_BITS  - Fractional bits in Q(INT.FRAC) format (default: 20)
+//
+// Ports:
+//   z_r          [input,  DATA_WIDTH] - Real part of z_n
+//   z_i          [input,  DATA_WIDTH] - Imaginary part of z_n
+//   c_r          [input,  DATA_WIDTH] - Real part of constant c
+//   c_i          [input,  DATA_WIDTH] - Imaginary part of constant c
+//   burning_ship [input,  1]          - 1 = Burning Ship mode, 0 = Mandelbrot/Julia
+//   z_r_out      [output, DATA_WIDTH] - Real part of z_{n+1}
+//   z_i_out      [output, DATA_WIDTH] - Imaginary part of z_{n+1}
+//   escaped      [output, 1]          - High if |z_n|^2 > 4 (on input z)
+//
+// Note on escaped:
+//   The escape condition is evaluated on the INPUT z (z_n), not the output z_{n+1}.
+//   This allows the parent FSM to check escape before registering the next value,
+//   which gives a clean one-cycle decision with no extra pipeline delay.
+////////////////////////////////////////////////////////////////////////////////
+
+module MandelbrotIterator #(
+    parameter DATA_WIDTH = 24,  // Fixed-point total width
+    parameter FRAC_BITS  = 20   // Number of fractional bits
+)(
+    input  wire signed [DATA_WIDTH-1:0] z_r,          // Real part of z_n
+    input  wire signed [DATA_WIDTH-1:0] z_i,          // Imaginary part of z_n
+    input  wire signed [DATA_WIDTH-1:0] c_r,          // Real component of c
+    input  wire signed [DATA_WIDTH-1:0] c_i,          // Imaginary component of c
+    input  wire                         burning_ship,  // 0=Mandelbrot/Julia 1=Burning Ship
+    output wire signed [DATA_WIDTH-1:0] z_r_out,      // Real part of z_{n+1}
+    output wire signed [DATA_WIDTH-1:0] z_i_out,      // Imaginary part of z_{n+1}
+    output wire                         escaped        // High when |z_n|^2 > 4
+);
+
+    // -------------------------------------------------------------------------
+    // Escape threshold: 4.0 in Q4.20 fixed-point = 4 * 2^20
+    // -------------------------------------------------------------------------
+    localparam signed [DATA_WIDTH-1:0] ESCAPE_THRESHOLD = 4 <<< FRAC_BITS;
+
+    // -------------------------------------------------------------------------
+    // Burning Ship: absolute values of z_r, z_i for the cross-product term only.
+    //   z_r^2 and z_i^2 are unchanged (squaring always gives a positive result).
+    //   Only the cross term 2*z_r*z_i uses |z_r|*|z_i| in Burning Ship mode.
+    // -------------------------------------------------------------------------
+    wire signed [DATA_WIDTH-1:0] zr_cross = (burning_ship & z_r[DATA_WIDTH-1]) ? -z_r : z_r;
+    wire signed [DATA_WIDTH-1:0] zi_cross = (burning_ship & z_i[DATA_WIDTH-1]) ? -z_i : z_i;
+
+    // -------------------------------------------------------------------------
+    // Fixed-point products: z_r^2, z_i^2, cross term
+    // Each uses one FixedPointMult instance (maps to DSP blocks in synthesis)
+    // -------------------------------------------------------------------------
+    wire signed [DATA_WIDTH-1:0] zr_sq;   // z_r  * z_r
+    wire signed [DATA_WIDTH-1:0] zi_sq;   // z_i  * z_i
+    wire signed [DATA_WIDTH-1:0] zr_zi;   // |z_r|*|z_i|  (or z_r*z_i in Mandelbrot)
+
+    FixedPointMult #(.DATA_WIDTH(DATA_WIDTH), .FRAC_BITS(FRAC_BITS)) mult_zr_sq (
+        .a(z_r),     .b(z_r),     .result(zr_sq)
+    );
+
+    FixedPointMult #(.DATA_WIDTH(DATA_WIDTH), .FRAC_BITS(FRAC_BITS)) mult_zi_sq (
+        .a(z_i),     .b(z_i),     .result(zi_sq)
+    );
+
+    FixedPointMult #(.DATA_WIDTH(DATA_WIDTH), .FRAC_BITS(FRAC_BITS)) mult_zr_zi (
+        .a(zr_cross), .b(zi_cross), .result(zr_zi)  // uses abs values in Burning Ship
+    );
+
+    // -------------------------------------------------------------------------
+    // Iteration output:
+    //   z_r' = z_r^2 - z_i^2 + c_r            (same for both modes)
+    //   z_i' = 2*(cross) + c_i                 (cross = z_r*z_i or |z_r|*|z_i|)
+    // -------------------------------------------------------------------------
+    assign z_r_out = zr_sq - zi_sq + c_r;
+    assign z_i_out = {zr_zi[DATA_WIDTH-2:0], 1'b0} + c_i; // signed left-shift by 1
+
+    // -------------------------------------------------------------------------
+    // Escape condition: |z_n|^2 > 4  =>  z_r^2 + z_i^2 > 4
+    // Use a wider sum to prevent signed overflow before the comparison.
+    // Both zr_sq and zi_sq are positive (squares), so the sum fits in DATA_WIDTH+1 bits.
+    // -------------------------------------------------------------------------
+    wire signed [DATA_WIDTH:0] mag_sq = {zr_sq[DATA_WIDTH-1], zr_sq}
+                                      + {zi_sq[DATA_WIDTH-1], zi_sq};
+
+    assign escaped = (mag_sq > {1'b0, ESCAPE_THRESHOLD});
+
+endmodule

@@ -1,0 +1,25 @@
+
+State Machine - |MandelbrotTop|LT24Display:lt24|stateMachine
+Name stateMachine.IDLE_STATE stateMachine.CASET_STATE stateMachine.XHADDR_STATE stateMachine.XLADDR_STATE stateMachine.PASET_STATE stateMachine.YHADDR_STATE stateMachine.YLADDR_STATE stateMachine.WRITE_STATE stateMachine.CMD_STATE stateMachine.LOAD_STATE stateMachine.INIT_STATE 
+stateMachine.INIT_STATE 0 0 0 0 0 0 0 0 0 0 0 
+stateMachine.LOAD_STATE 0 0 0 0 0 0 0 0 0 1 1 
+stateMachine.CMD_STATE 0 0 0 0 0 0 0 0 1 0 1 
+stateMachine.WRITE_STATE 0 0 0 0 0 0 0 1 0 0 1 
+stateMachine.YLADDR_STATE 0 0 0 0 0 0 1 0 0 0 1 
+stateMachine.YHADDR_STATE 0 0 0 0 0 1 0 0 0 0 1 
+stateMachine.PASET_STATE 0 0 0 0 1 0 0 0 0 0 1 
+stateMachine.XLADDR_STATE 0 0 0 1 0 0 0 0 0 0 1 
+stateMachine.XHADDR_STATE 0 0 1 0 0 0 0 0 0 0 1 
+stateMachine.CASET_STATE 0 1 0 0 0 0 0 0 0 0 1 
+stateMachine.IDLE_STATE 1 0 0 0 0 0 0 0 0 0 1 
+
+State Machine - |MandelbrotTop|MandelbrotCore:mandelbrot_core|state
+Name state.NEXT_ROW state.NEXT_PIXEL state.WRITE_PIXEL state.COMPUTE state.INIT_PIXEL state.INIT_ROW state.INIT_FRAME state.IDLE 
+state.IDLE 0 0 0 0 0 0 0 0 
+state.INIT_FRAME 0 0 0 0 0 0 1 1 
+state.INIT_ROW 0 0 0 0 0 1 0 1 
+state.INIT_PIXEL 0 0 0 0 1 0 0 1 
+state.COMPUTE 0 0 0 1 0 0 0 1 
+state.WRITE_PIXEL 0 0 1 0 0 0 0 1 
+state.NEXT_PIXEL 0 1 0 0 0 0 0 1 
+state.NEXT_ROW 1 0 0 0 0 0 0 1 

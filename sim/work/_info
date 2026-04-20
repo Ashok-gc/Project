@@ -1,0 +1,241 @@
+m255
+K4
+z2
+!s11f vlog 2020.1 2020.02, Feb 28 2020
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/sim
+vColourMapper
+Z1 !s110 1776788579
+!i10b 1
+!s100 J6;86:E63^D]^9JfeQ8fO3
+Z2 !s11b Dg1SIo80bB@j0V0VzS_@n1
+IgPedo3nd2DM2@iDBE=JE_2
+Z3 VDg1SIo80bB@j0V0VzS_@n1
+R0
+w1776692360
+8../rtl/ColourMapper.v
+F../rtl/ColourMapper.v
+!i122 6
+L0 32 83
+Z4 OV;L;2020.1;71
+r1
+!s85 0
+31
+Z5 !s108 1776788579.000000
+!s107 tb_MandelbrotCore.v|../rtl/MandelbrotCore.v|../rtl/ColourMapper.v|../rtl/MandelbrotIterator.v|../rtl/FixedPointMult.v|
+Z6 !s90 -reportprogress|300|../rtl/FixedPointMult.v|../rtl/MandelbrotIterator.v|../rtl/ColourMapper.v|../rtl/MandelbrotCore.v|tb_MandelbrotCore.v|
+!i113 1
+Z7 tCvgOpt 0
+n@colour@mapper
+vFixedPointMult
+R1
+!i10b 1
+!s100 56Z>ei;BOdLA:4C>hQ33I0
+R2
+IRBk6mNONnkIjTHg<kg1OR3
+R3
+R0
+w1776692291
+8../rtl/FixedPointMult.v
+F../rtl/FixedPointMult.v
+!i122 6
+L0 34 20
+R4
+r1
+!s85 0
+31
+R5
+Z8 !s107 tb_MandelbrotCore.v|../rtl/MandelbrotCore.v|../rtl/ColourMapper.v|../rtl/MandelbrotIterator.v|../rtl/FixedPointMult.v|
+R6
+!i113 1
+R7
+n@fixed@point@mult
+vMandelbrotCore
+R1
+!i10b 1
+!s100 1eNEA5>foLblDa^gR1FR92
+R2
+IlgmXf`2a?16CZZj87hl7K3
+R3
+R0
+w1776787639
+8../rtl/MandelbrotCore.v
+F../rtl/MandelbrotCore.v
+!i122 6
+L0 61 237
+R4
+r1
+!s85 0
+31
+R5
+R8
+R6
+!i113 1
+R7
+n@mandelbrot@core
+vMandelbrotIterator
+R1
+!i10b 1
+!s100 >RDhNX0IdDARl0NkkUm_j0
+R2
+IVAzc5>nBzD3^nKEbBPc510
+R3
+R0
+w1776692316
+8../rtl/MandelbrotIterator.v
+F../rtl/MandelbrotIterator.v
+!i122 6
+L0 40 57
+R4
+r1
+!s85 0
+31
+R5
+R8
+R6
+!i113 1
+R7
+n@mandelbrot@iterator
+vtb_ColourMapper
+!s110 1776787251
+!i10b 1
+!s100 H;4hSA]gRL2JQRa1WYNJU2
+R2
+Ig6L34F5]Zze5oQGUz:h^@0
+R3
+R0
+w1776764591
+8tb_ColourMapper.v
+Ftb_ColourMapper.v
+!i122 3
+L0 33 188
+R4
+r1
+!s85 0
+31
+!s108 1776787250.000000
+!s107 tb_ColourMapper.v|../rtl/ColourMapper.v|
+!s90 -reportprogress|300|../rtl/ColourMapper.v|tb_ColourMapper.v|
+!i113 1
+R7
+ntb_@colour@mapper
+vtb_FixedPointMult
+!s110 1776786116
+!i10b 1
+!s100 296OA7AkR[R?3Ii=5aYB`2
+R2
+I;PhfiA_:SnmMgQ9W^zzmK2
+R3
+R0
+w1776692540
+8tb_FixedPointMult.v
+Ftb_FixedPointMult.v
+!i122 1
+L0 23 172
+R4
+r1
+!s85 0
+31
+!s108 1776786116.000000
+!s107 tb_FixedPointMult.v|../rtl/FixedPointMult.v|
+!s90 -reportprogress|300|../rtl/FixedPointMult.v|tb_FixedPointMult.v|
+!i113 1
+R7
+ntb_@fixed@point@mult
+vtb_MandelbrotCore
+R1
+!i10b 1
+!s100 L>XaE8m900f?AE?5]`MDK2
+R2
+INN2<ieGQEIBRnzQbloP9E1
+R3
+R0
+w1776787647
+8tb_MandelbrotCore.v
+Ftb_MandelbrotCore.v
+!i122 6
+L0 40 314
+R4
+r1
+!s85 0
+31
+R5
+R8
+R6
+!i113 1
+R7
+ntb_@mandelbrot@core
+vtb_MandelbrotIterator
+!s110 1776787112
+!i10b 1
+!s100 5?bGA9WL38CbHb0WdFiSP0
+R2
+IfgDfEFEiMfETkG2:eSk`T3
+R3
+R0
+w1776692574
+8tb_MandelbrotIterator.v
+Ftb_MandelbrotIterator.v
+!i122 2
+L0 22 168
+R4
+r1
+!s85 0
+31
+!s108 1776787111.000000
+!s107 tb_MandelbrotIterator.v|../rtl/MandelbrotIterator.v|../rtl/FixedPointMult.v|
+!s90 -reportprogress|300|../rtl/FixedPointMult.v|../rtl/MandelbrotIterator.v|tb_MandelbrotIterator.v|
+!i113 1
+R7
+ntb_@mandelbrot@iterator
+vtb_ZoomController
+Z9 !s110 1776787383
+!i10b 1
+!s100 BoJ6AC592XXo[?4jOn6>U1
+R2
+IeQ0[z^WIRVMT7N4]Qh5?G1
+R3
+R0
+w1776773963
+8tb_ZoomController.v
+Ftb_ZoomController.v
+!i122 4
+L0 36 357
+R4
+r1
+!s85 0
+31
+Z10 !s108 1776787383.000000
+Z11 !s107 tb_ZoomController.v|../rtl/ZoomController.v|
+Z12 !s90 -reportprogress|300|../rtl/ZoomController.v|tb_ZoomController.v|
+!i113 1
+R7
+ntb_@zoom@controller
+vZoomController
+R9
+!i10b 1
+!s100 @Ph;@mf6OZ^CmATkQPi9n3
+R2
+InEnelQ^:IPFzK3WF9C?@Z1
+R3
+R0
+w1776771095
+8../rtl/ZoomController.v
+F../rtl/ZoomController.v
+!i122 4
+L0 23 124
+R4
+r1
+!s85 0
+31
+R10
+R11
+R12
+!i113 1
+R7
+n@zoom@controller

@@ -1,0 +1,97 @@
+# Reading pref.tcl
+# Reading C:/Users/Ahsuuu/modelsim.tcl
+# do MandelbrotFPGA_run_msim_rtl_verilog.do
+# if {[file exists rtl_work]} {
+# 	vdel -lib rtl_work -all
+# }
+# vlib rtl_work
+# vmap work rtl_work
+# Model Technology ModelSim - Intel FPGA Edition vmap 2020.1 Lib Mapping Utility 2020.02 Feb 28 2020
+# vmap work rtl_work 
+# Copying C:/intelFPGA/20.1/modelsim_ase/win32aloem/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# 
+# vlog -vlog01compat -work work +incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl {C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 19:58:31 on Apr 21,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl" C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotTop.v 
+# -- Compiling module MandelbrotTop
+# 
+# Top level modules:
+# 	MandelbrotTop
+# End time: 19:58:31 on Apr 21,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl {C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotCore.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 19:58:31 on Apr 21,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl" C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotCore.v 
+# -- Compiling module MandelbrotCore
+# 
+# Top level modules:
+# 	MandelbrotCore
+# End time: 19:58:31 on Apr 21,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl {C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotIterator.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 19:58:31 on Apr 21,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl" C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/MandelbrotIterator.v 
+# -- Compiling module MandelbrotIterator
+# 
+# Top level modules:
+# 	MandelbrotIterator
+# End time: 19:58:31 on Apr 21,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl {C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/FixedPointMult.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 19:58:31 on Apr 21,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl" C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/FixedPointMult.v 
+# -- Compiling module FixedPointMult
+# 
+# Top level modules:
+# 	FixedPointMult
+# End time: 19:58:31 on Apr 21,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl {C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 19:58:31 on Apr 21,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl" C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ColourMapper.v 
+# -- Compiling module ColourMapper
+# 
+# Top level modules:
+# 	ColourMapper
+# End time: 19:58:31 on Apr 21,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl {C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ZoomController.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 19:58:31 on Apr 21,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl" C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/ZoomController.v 
+# -- Compiling module ZoomController
+# 
+# Top level modules:
+# 	ZoomController
+# End time: 19:58:31 on Apr 21,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl {C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/SevenSegDecoder.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 19:58:32 on Apr 21,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl" C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/MandelbrotFPGA/rtl/SevenSegDecoder.v 
+# -- Compiling module SevenSegDecoder
+# 
+# Top level modules:
+# 	SevenSegDecoder
+# End time: 19:58:32 on Apr 21,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vlog -vlog01compat -work work +incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/ELEC5566M-Resources/sampleCode/UnitA-1/HPSWrapper/synthesis/submodules {C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/ELEC5566M-Resources/sampleCode/UnitA-1/HPSWrapper/synthesis/submodules/LT24Display.v}
+# Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 19:58:32 on Apr 21,2026
+# vlog -reportprogress 300 -vlog01compat -work work "+incdir+C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/ELEC5566M-Resources/sampleCode/UnitA-1/HPSWrapper/synthesis/submodules" C:/Users/Ahsuuu/Documents/Claude/Projects/FPGA/ELEC5566M-Resources/sampleCode/UnitA-1/HPSWrapper/synthesis/submodules/LT24Display.v 
+# -- Compiling module LT24Display
+# -- Compiling module LT24DisplayInterface
+# -- Compiling module ResetSynchroniser
+# -- Compiling module LT24InitialData
+# 
+# Top level modules:
+# 	LT24Display
+# End time: 19:58:32 on Apr 21,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# 
