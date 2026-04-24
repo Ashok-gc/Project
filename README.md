@@ -1,7 +1,7 @@
 # FPGA Mandelbrot / Julia Set Explorer
 
 **Module:** ELEC5566M — FPGA Design for System on Chip  
-**Author:** Sisam Bhattarai  
+**Author:** Ashok
 **Institution:** University of Leeds  
 **Target Device:** Intel Cyclone V (5CSEMA5F31C6) — Terasic DE1-SoC  
 **Display:** LT24 LCD Module (240×320 pixels, RGB565 colour)  
